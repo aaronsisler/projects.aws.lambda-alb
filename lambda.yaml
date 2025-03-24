@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lambda function
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ["sts:AssumeRole"]
+            Effect: Allow
+            Principal:
+              Service: ["lambda.amazonaws.com"]
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  LambdaFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt Lambda.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: elasticloadbalancing.amazonaws.com
+
+  Lambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: AWS Lambda function
+      FunctionName: "lambda-alb"
+      Runtime: python3.13
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 60
+      Handler: lambda_alb.handler
+      MemorySize: 256
+      Code:
+        ZipFile: |
+          def handler(event, context):
+            response = {
+              'isBase64Encoded': False,
+              'statusCode': 200,
+              'body': 'HELLO WORLD!'
+            }
+            return response
