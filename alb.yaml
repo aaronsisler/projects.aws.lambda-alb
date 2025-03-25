@@ -1,0 +1,56 @@
+Description: ALB And Lambdas
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  LoadBalancerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Load balance allow port 80 traffic
+      VpcId: !ImportValue AlbLambdaVpcId
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 80
+          # Below maps to the pl-valid-ebsolutions-ip-addresses
+          SourcePrefixListId: pl-0b220b9ea9b3c21f1
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: projects.aws.alb-lambda
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - !Ref LoadBalancerSecGroup
+      Subnets:
+        - !ImportValue AlbLambdaPublicSubnetA
+        - !ImportValue AlbLambdaPublicSubnetB
+      Tags:
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
+
+  # LoadBalancerListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     Protocol: HTTP
+  #     LoadBalancerArn: !Ref LoadBalancer
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref LoadBalancerTargetGroup
+  #     Port: 80
+  #     Tags:
+  #       - Key: "CostCenter"
+  #         Value: "projects.aws.alb-lambda"
+
+  # LoadBalancerTargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     TargetType: lambda
+  #     Targets:
+  #       - AvailabilityZone: all
+  #         Id: !GetAtt Lambda.Arn
+  #     Tags:
+  #       - Key: "CostCenter"
+  #         Value: "projects.aws.alb-lambda"
