@@ -9,6 +9,11 @@ Resources:
       CidrBlock: "10.0.0.0/16"
       EnableDnsHostnames: true
       EnableDnsSupport: true
+      Tags:
+        - Key: "Name"
+          Value: "projects.aws.alb-lambda"
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
 
   # Public subnets (placed in 1 az randomly)
   PublicSubA:
@@ -20,6 +25,9 @@ Resources:
       AvailabilityZone: !Select
         - 0
         - Fn::GetAZs: !Ref AWS::Region
+      Tags:
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
 
   PublicSubB:
     Type: AWS::EC2::Subnet
@@ -30,10 +38,21 @@ Resources:
       AvailabilityZone: !Select
         - 1
         - Fn::GetAZs: !Ref AWS::Region
+      Tags:
+        - Key: "Name"
+          Value: "projects.aws.alb-lambda"
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
 
   # Internet gateway and attachment to VPC
   InternetGateway:
     Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: "Name"
+          Value: "projects.aws.alb-lambda"
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
 
   GatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -46,6 +65,11 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
+      Tags:
+        - Key: "Name"
+          Value: "projects.aws.alb-lambda"
+        - Key: "CostCenter"
+          Value: "projects.aws.alb-lambda"
 
   RoutePublic:
     Type: AWS::EC2::Route
@@ -67,15 +91,15 @@ Resources:
       SubnetId: !Ref PublicSubB
 
 Outputs:
-  VPCID:
+  VpcId:
     Value: !Ref VPC
     Export:
-      Name: VPCID
+      Name: AlbLambdaVpcId
   PublicSubnetA:
     Value: !Ref PublicSubA
     Export:
-      Name: PublicSubnetA
+      Name: AlbLambdaPublicSubnetA
   PublicSubnetB:
     Value: !Ref PublicSubB
     Export:
-      Name: PublicSubnetB
+      Name: AlbLambdaPublicSubnetB
