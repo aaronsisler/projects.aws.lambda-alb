@@ -7,15 +7,24 @@ $ curl loadb-LoadB-R7RVQD09YC9O-1401336014.eu-west-1.elb.amazonaws.com
 Hello World!
 ```
 
-## Steps
+## Steps to deploy
 
-1. Deploy VPC
-   - `aws cloudformation create-stack --stack-name vpc-alb-lambda --template-body file://vpc.yaml --capabilities CAPABILITY_NAMED_IAM`
-   - tutorial for VPC can be found [here](https://medium.com/@t3chflicks/virtual-private-cloud-on-aws-quickstart-with-cloudformation-4583109b2433)
+1. Deploy Alb
+   - `aws cloudformation create-stack --stack-name alb-project-alb --template-body file://alb.yaml`
 1. Deploy Service
-   - `aws cloudformation create-stack --stack-name lambda-deploy --template-body file://lambda.yaml --capabilities CAPABILITY_NAMED_IAM`
+   - `aws cloudformation create-stack --stack-name alb-project-service --template-body file://service.yaml`
 1. Deploy Route53
-   - `aws cloudformation create-stack --stack-name alb-lambda-route53 --template-body file://route53.yaml`
+
+   - `aws cloudformation create-stack --stack-name alb-project-route-53 --template-body file://route-53.yaml`
+
+## Steps to delete
+
+1. Deploy Route53
+   - `aws cloudformation delete-stack --stack-name alb-project-route-53`
+1. Deploy Service
+   - `aws cloudformation delete-stack --stack-name alb-project-service`
+1. Deploy Alb
+   - `aws cloudformation delete-stack --stack-name alb-project-alb`
 
 ### Tips
 
