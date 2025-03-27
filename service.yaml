@@ -20,8 +20,6 @@ Resources:
       Cluster: default
       ServiceName: events-admin-service
       TaskDefinition: arn:aws:ecs:us-east-1:654918520080:task-definition/events-admin-service-task:1
-      # CapacityProviderStrategyItem:
-      # CapacityProvider: FARGATE_SPOT
       LaunchType: FARGATE
       PlatformVersion: LATEST
       SchedulingStrategy: REPLICA
@@ -32,6 +30,10 @@ Resources:
           AssignPublicIp: ENABLED
           SecurityGroups: !Ref SecurityGroupIds
           Subnets: !Ref SubnetIds
+      LoadBalancers:
+        - ContainerPort: 80
+          ContainerName: events-admin-service-container
+          TargetGroupArn: !ImportValue EventsAdminServiceLoadBalancerTargetGroup
       DeploymentConfiguration:
         DeploymentCircuitBreaker:
           Enable: true

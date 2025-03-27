@@ -1,0 +1,14 @@
+Description: ALB And Lambdas
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  Route53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: ZR2VAHLVW389H
+      Name: events.otterandcow.com.
+      Type: A
+      AliasTarget:
+        HostedZoneId: !ImportValue EventsAdminServiceLoadBalancerHostedZoneId # Replace with the ALB's HostedZoneId
+        DNSName: !ImportValue EventsAdminServiceLoadBalancerDnsName # Replace with the ALB's DNS Name
+        EvaluateTargetHealth: "true"
