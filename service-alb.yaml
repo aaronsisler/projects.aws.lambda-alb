@@ -32,6 +32,10 @@ Resources:
           AssignPublicIp: ENABLED
           SecurityGroups: !Ref SecurityGroupIds
           Subnets: !Ref SubnetIds
+      LoadBalancers:
+        - ContainerName: events-admin-service-container
+          ContainerPort: 80
+          TargetGroupArn: !ImportValue EventsAdminServiceLoadBalancerTargetGroup
       DeploymentConfiguration:
         DeploymentCircuitBreaker:
           Enable: true
@@ -45,3 +49,16 @@ Resources:
       Tags:
         - Key: "CostCenter"
           Value: "services.events-admin-service"
+
+  Route53Record:
+    Type: AWS::Route53::RecordSet
+    DependsOn:
+      - EcsService
+    Properties:
+      HostedZoneId: ZR2VAHLVW389H
+      Name: events.otterandcom.com
+      Type: A
+      AliasTarget:
+        HostedZoneId: !ImportValue EventsAdminServiceLoadBalancerHostedZoneId # Replace with the ALB's HostedZoneId
+        DNSName: !ImportValue EventsAdminServiceLoadBalancerDnsName # Replace with the ALB's DNS Name
+        EvaluateTargetHealth: "true"
